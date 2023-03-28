@@ -1,4 +1,4 @@
-# Lesson 11 New func tests for smart contracts in toncli
+# Lesson 12 New func tests for smart contracts in toncli
 
 ## Introduction
 
