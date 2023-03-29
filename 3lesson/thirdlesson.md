@@ -1,66 +1,65 @@
 # Lesson 3 Proxy smart contract
-## Introduction
+## 介紹
 
-In this tutorial, we will write a proxy (sends all messages to its owner) smart contract in the test network The Open Network in the FunC language, deploy it to the test network using [toncli](https://github.com/disintar/toncli), and we will test it in the next lesson.
+在這個課程中，我們將使用 FunC 語言在測試網路 The Open Network 中撰寫一個代理（將所有訊息發送給其擁有者）智慧合約，使用 [toncli](https://github.com/disintar/toncli) 部署到測試網路中，並在下一課中進行測試。.
 
-## Requirements
+## 要求
 
-To complete this tutorial, you need to install the [toncli](https://github.com/disintar/toncli/blob/master/INSTALLATION.md) command line interface .
+完成此課程，您需要安裝 [toncli](https://github.com/disintar/toncli/blob/master/INSTALLATION.md) 的 command line 的接口。
 
-And also be able to create/deploy a project using toncli, you can learn how to do it in the [first lesson](https://github.com/romanovichim/TonFunClessons_Eng/blob/main/1lesson/firstlesson.md).
+還需要能夠使用 toncli 創建/部署項目，您可以在[第一課](../1lesson/firstlesson.md)中學習如何做到這一點。
 
-## Smart contract
+## 智慧合約
 
-The smart contract that we will create should have the following functionality**:
-- Forwarding all messages coming into the contract to the owner;
-- When forwarding, the sender's address must go first, and then the body of the message
-- The value of the Toncoin attached to the message must be equal to the value of the incoming message minus processing fees (computation and message forwarding fees)
-- The owner's address is stored in the smart contract storage
-- When sending a message to the contract from the owner, the forwarding should not be carried out
+我們將創建的智慧合約應該具有以下功能：
 
-** I decided to take ideas for smart contracts from the [FunC contest1](https://github.com/ton-blockchain/func-contest1) tasks, as they are very well suited for getting acquainted with the development of smart contracts for TON.
+- 將進入合約的所有訊息轉發給所有者；
+- 轉發時，發件人的地址必須排在訊息之前；
+- 附加到訊息的 Toncoin 值必須等於傳入訊息減去處理費用（計算和訊息轉發費用）的值；
+- 所有者的地址儲存在智慧合約儲存中；
+- 從所有者向合約發送訊息時，不應進行轉發。
+- ** 我決定從 [FunC 任務](https://github.com/ton-blockchain/func-contest1)中獲取智慧合約的想法，因為它們非常適合熟悉 TON 的智慧合約開發。
+## 外部方法
 
-## External method
-
-In order for our proxy to receive messages, we will use the external method `recv_internal()`
+為了讓我們的代理接收訊息，我們將使用外部方法 `recv_internal()`
 
     () recv_internal() {
 
     }
 
-##### External method arguments
-Here a logical question arises - how to understand what arguments a function should have so that it can receive messages on the TON network?
+##### 外部方法的參數
+一個邏輯上的問題出現了 - 如何理解函數應該有哪些參數才能在 TON 網路上接收訊息？
 
-According to the documentation of the [TON virtual machine - TVM](https://ton-blockchain.github.io/docs/tvm.pdf), when an event occurs on an account in one of the TON chains, it triggers a transaction.
+根據 [TON 虛擬機 - TVM](https://ton-blockchain.github.io/docs/tvm.pdf) 的文件，當 TON 鏈中的一個帳戶發生事件時，它會觸發一個交易。
 
-Each transaction consists of up to 5 phases(stages). Read more [here](https://ton-blockchain.github.io/docs/#/smart-contracts/tvm_overview?id=transactions-and-phases).
+每個交易由最多 5 個階段（stage）組成。在[這裡](https://ton-blockchain.github.io/docs/#/smart-contracts/tvm_overview?id=transactions-and-phases)讀取更多 here。
 
-We are interested in **Compute phase**. And to be more specific, what is "on the stack" during initialization. For normal message-triggered transactions, the initial state of the stack looks like this:
+我們感興趣的是**計算階段**。更具體地說，初始化時堆棧上有什麼。對於正常的訊息觸發交易，堆棧的初始狀態如下：
 
-5 elements:
-- Smart contract balance (in nanoTons)
-- Incoming message balance (in nanotones)
-- Cell with incoming message
-- Incoming message body, slice type
-- Function selector (for recv_internal it is 0)
+5 個元素：
+- 智慧合約餘額（以 nanoTons 為單位）
+- 進入消息餘額（以 nanotones 為單位）
+- 有關進入消息的 cell
+- 進入消息正文，切片類型
+- 函數選擇器（對於 recv_internal 函數，其值為 0）
 
-As a result, we get the following code:
+因此，我們得到以下代碼：
 
     () recv_internal(int balance, int msg_value, cell in_msg_full, slice in_msg_body) {
 
     }
 	
-## Sender's address
+## 發送者地址
 
-In accordance with the task, we need to take the address of the sender. We will take the address from the cell with the incoming message `in_msg_full`. Let's move the code to a separate function.
+根據任務，我們需要獲取發送者的地址。我們將從包含進入消息 `in_msg_full` 的 cell 中取出地址。讓我們將程式碼移動到單獨的函數中。
 
 	() recv_internal (int balance, int msg_value, cell in_msg_full, slice in_msg_body) {
 	  slice sender_address = parse_sender_address(in_msg_full);
 	}
 	
-##### Writing a function
+##### 編寫一個函數
 
-Let's write the code of the parse_sender_address function, which takes the sender's address from the message cell and parse it:
+讓我們編寫解析發送者地址的代碼，從消息 cell 中獲取發送者地址並解析它：
 
 	slice parse_sender_address (cell in_msg_full) inline {
 	  var cs = in_msg_full.begin_parse();
@@ -69,41 +68,40 @@ Let's write the code of the parse_sender_address function, which takes the sende
 	  return sender_address;
 	}
 
-As you can see the function has an `inline` specifier, its code is actually substituted at every place where the function is called.
+正如您所看到的，該函數具有 `inline` 限定符，其代碼實際上被替換在每次調用函數的地方。
 
-In order for us to take the address, we need to convert the cell into a slice using `begin_parse`:
+為了獲取地址，我們需要使用 `begin_parse` 函數將 cell 轉換為切片：
 
 	var cs = in_msg_full.begin_parse();
 
-Now we need to "subtract" the resulting slice to the address. Using the `load_uint` function from the [FunC standard library](https://ton-blockchain.github.io/docs/#/func/stdlib) it loads an unsigned n-bit integer from the slice, "subtract" the flags.
+現在我們需要「減去」地址所對應的切片。使用來自 [FunC 標準庫](https://ton-blockchain.github.io/docs/#/func/stdlib) 的 `load_uint` 函數從切片中加載一個 n 位無符號整數，「減去」標誌（flags）：
 
 	var flags = cs~load_uint(4);
 
-In this lesson, we will not dwell on the flags in detail, but you can read more in paragraph [3.1.7](https://ton-blockchain.github.io/docs/tblkch.pdf).
+在這節課中，我們不會詳細討論標誌，但您可以在 [3.1.7](https://ton-blockchain.github.io/docs/tblkch.pdf) 中閱讀更多相關內容。
 
-And finally, the address. Use `load_msg_addr()` - which loads from the slice the only prefix that is a valid MsgAddress.
+最後，獲取地址。使用 `load_msg_addr()` 函數 - 從切片中加載唯一的前綴，該前綴是有效的 MsgAddress。
 
 	slice sender_address = cs~load_msg_addr();
 	return sender_address;
 
-## Address of the recipient
+## 收件人地址
 
-We will take the address from [c4](https://ton-blockchain.github.io/docs/tvm.pdf) which we have already talked about in previous lessons.
+我們將從我們之前講過的 [c4](https://ton-blockchain.github.io/docs/tvm.pdf) 中獲取地址。
 
-We will use:
-`get_data` - Gets a cell from the c4 register.
-`begin_parse` - converts a cell into a slice.
-`load_msg_addr()` - which loads from the slice the only prefix that is a valid MsgAddress.
+我們將使用以下函數：
+`get_data` - 從 c4 寄存器中獲取 cell。
+`begin_parse` - 將 cell 轉換為切片。
+`load_msg_addr()` - 從切片中加載唯一的前綴，該前綴是有效的 MsgAddress。
 
-As a result, we get the following function:
+因此，我們得到以下函數：
 
 	slice load_data () inline {
 	  var ds = get_data().begin_parse();
 	  return ds~load_msg_addr();
 	}
 
-
-It remains only to call it:
+只需調用它：
 
 	slice load_data () inline {
 	  var ds = get_data().begin_parse();
@@ -122,23 +120,21 @@ It remains only to call it:
 	  slice owner_address = load_data();
 	}
 	
-## Check the address equality condition
+## 比較地址相等條件
 
-By the condition of the task, the proxy should not forward the message if the contract owner accesses the smart contract of the proxy. Therefore, it is necessary to compare two addresses.
+根據任務，如果合約所有者訪問代理智慧合約，則代理不應轉發消息。因此，需要比較兩個地址是否相等。
 
-##### Compare Function
+##### 比較函數
 
-FunC support function definition in assembler (meaning Fift). This happens as follows - we define the function as a low-level TVM primitive. For the comparison function it would look like this:
+FunC 支援組合語言（即 Fift）定義函數。這可以通過將函數定義為低級 TVM 原語來實現。例如，比較函數的定義如下：
 
 	int equal_slices (slice a, slice b) asm "SDEQ";
 
-As you can see, the `asm` keyword is used
+您可以看到使用了 `asm` 關鍵字。您可以在 [TVM](https://ton-blockchain.github.io/docs/tvm.pdf) 的第 77 頁找到可用的原語列表。
 
-You can see the list of possible primitives from page 77 in [TVM](https://ton-blockchain.github.io/docs/tvm.pdf).
+##### 一元運算符
 
-##### Unary operator
-
-So we will use our `equal_slices` function in `if`:
+因此，我們將在 `if` 中使用 `equal_slices` 函數：
 
 	() recv_internal (int balance, int msg_value, cell in_msg_full, slice in_msg_body) {
 	  slice sender_address = parse_sender_address(in_msg_full);
@@ -149,7 +145,7 @@ So we will use our `equal_slices` function in `if`:
 	   }
 	}
 	
-But the function will check exactly the equality, how to check the inequality? The unary operator `~`, which is bitwise not, can help here. Now our code looks like this:
+但是該函數將檢查確切的相等性，如何檢查不等性呢？這裡可以使用位求反的一元運算符 `~`。現在我們的代碼如下：
 
 	int equal_slices (slice a, slice b) asm "SDEQ";
 
@@ -174,15 +170,13 @@ But the function will check exactly the equality, how to check the inequality? T
 	   }
 	}
 	
-It remains to send a message.
+現在，我們需要填充條件操作符的代碼，以便按照任務要求發送傳入的消息。
 
-## Send message
-So it remains for us to fill the body of the conditional operator in accordance with the task, namely, to send an incoming message.
+## 發送訊息
+因此，我們仍然需要根據任務填充條件運算符的主體，即發送傳入消息。
 
-##### Message structure
-
-The full message structure can be found [here - message layout](https://ton-blockchain.github.io/docs/#/smart-contracts/messages?id=message-layout). But usually we don't need to control each field, so we can use the short form from [example](https://ton-blockchain.github.io/docs/#/smart-contracts/messages?id=sending-messages):
-
+##### 消息結構
+完整的訊息結構可以在這裡 - [訊息佈局](https://ton-blockchain.github.io/docs/#/smart-contracts/messages?id=message-layout)中找到。但通常我們不需要控制每個字段，因此可以使用來自[範例](https://ton-blockchain.github.io/docs/#/smart-contracts/messages?id=sending-messages)的簡短形式:
 
 	 var msg = begin_cell()
 		.store_uint(0x18, 6)
@@ -192,31 +186,31 @@ The full message structure can be found [here - message layout](https://ton-bloc
 		.store_slice(message_body)
 	  .end_cell();
 
+如您所見，使用了來自 [FunC 標準庫](https://ton-blockchain.github.io/docs/#/func/stdlib)的函數來構建消息。即建構器原始碼（部分構建的單元格，正如您可能記得第一課所述）。考慮：
 
-As you can see, functions from the [FunC standard library](https://ton-blockchain.github.io/docs/#/func/stdlib) are used to construct the message. Namely, the "wrapper" functions of the Builder primitives (partially built cells, as you may remember from the first lesson). Consider:
-
- `begin_cell()` - will create a Builder for the future cell
- `end_cell()` - will create a Cell (cell)
- `store_uint` - store uint in Builder
- `store_slice` - store the slice in the Builder
- `store_coins` - here the documentation means `store_grams` - used to store TonCoins. More details [here](https://ton-blockchain.github.io/docs/#/func/stdlib?id=store_grams).
+ `begin_cell()` - 將為將來的 cell 創建一個建構器
+ `end_cell()` - 將創建一個 cell
+ `store_uint` - 在建構器中儲存無符號的整數
+ `store_slice` - 在建構器中儲存切片
+ `store_coins` -  此處的文檔意思為 store_grams - 用於儲存TonCoins。更多細節在[此處](https://ton-blockchain.github.io/docs/#/func/stdlib?id=store_grams)。
   
- And also additionally consider `store_ref`, which will be needed to send the address.
+另外還要考慮到 `store_ref`，需要用來發送地址。  
  
- `store_ref` - Stores a cell reference in the Builder
- Now that we have all the necessary information, let's assemble the message.
+ `store_ref` - 在建構器中儲存 cell 引用，現在我們已經擁有了所有必要的訊息，讓我們組裝消息。
  
- ##### The final touch - the body of the incoming message
+ ##### 最後的收件訊息內容
 
-To send in a message the message body that came in `recv_internal`. we will collect the cell, and in the message itself we will make a link to it using `store_ref`.
+為了將來自 `recv_internal` 的消息正文發送到訊息中，我們將收集單元格，在訊息本身中使用 `store_ref` 建立連結。
 
 	  if ~ equal_slices(sender_address, owner_address) {
 		cell msg_body_cell = begin_cell().store_slice(in_msg_body).end_cell();
 	   }
 
-##### Collecting the message
+##### 收集訊息
 
-In accordance with the condition of the problem, we must send the address and body of the message. So let's change `.store_slice(message_body)` to `.store_slice(sender_address)` and `.store_ref(msg_body_cell)` in the msg variable. We get:
+根據問題的條件，我們必須發送地址和訊息的正文。因此，我們將 `.store_slice(message_body)` 更改為 `.store_slice(sender_address)` 和 `.store_ref(msg_body_cell)`。
+
+我們得到：
 
 	  if ~ equal_slices(sender_address, owner_address) {
 		cell msg_body_cell = begin_cell().store_slice(in_msg_body).end_cell();
@@ -231,32 +225,35 @@ In accordance with the condition of the problem, we must send the address and bo
 			  .end_cell();
 	   }
 
-It remains only to send our message.
+它仍然只是發送我們的訊息。
 
-##### Message sending mode
+##### 傳送訊息的模式
 
-To send messages, use `send_raw_message` from the [standard library](https://ton-blockchain.github.io/docs/#/func/stdlib?id=send_raw_message).
+使用[標準函式庫](https://ton-blockchain.github.io/docs/#/func/stdlib?id=send_raw_message)的 `send_raw_message` 函式傳送訊息。
 
-We have already collected the msg variable, it remains to figure out `mode`. Each mode is described in [documentation](https://ton-blockchain.github.io/docs/#/func/stdlib?id=send_raw_message). Let's look at an example to make it clearer.
+我們已經收集了 msg 變數，現在只需弄清楚 `mode` 即可。每個模式都在[文檔](https://ton-blockchain.github.io/docs/#/func/stdlib?id=send_raw_message)中有描述。
+為了更清楚地說明，讓我們看一個例子。
 
-Let there be 100 coins on the balance of the smart contract and we receive an internal message with 60 coins and send a message with 10, the total fee is 3.
+假設智慧合約的餘額為 100 個 Toncoin，我們收到了一個 60 個 Toncoin 的內部訊息，並發送了一個 10 個 Toncoin 的訊息，總費用為 3 個 Toncoin。
 
- `mode = 0` - balance (100+60-10 = 150 coins), send(10-3 = 7 coins)
- `mode = 1` - balance (100+60-10-3 = 147 coins), send(10 coins)
- `mode = 64` - balance (100-10 = 90 coins), send (60+10-3 = 67 coins)
- `mode = 65` - balance (100-10-3=87 coins), send (60+10 = 70 coins)
- `mode = 128` -balance (0 coins), send (100+60-3 = 157 coins)
+ `mode = 0` - 餘額（100+60-10 = 150 個 Toncoin），傳送（10-3 = 7 個Toncoin）
+ `mode = 1` - 餘額（100+60-10-3 = 147 個 Toncoin），傳送（10 個 Toncoin）
+ `mode = 64` - 餘額（100-10 = 90 個 Toncoin），傳送（60+10-3 = 67 個 Toncoin）
+ `mode = 65` - 餘額（100-10-3 = 87 個 Toncoin），傳送（60+10 = 70 個 Toncoin）
+ `mode = 128` - 餘額（0 個 Toncoin），傳送（100+60-3 = 157 個 Toncoin）
  
- Modes 1 and 65 described above are mode' = mode + 1.
+ 上面描述的 Modes 1 和 65 是 mode' = mode + 1。
  
-Since, according to the task, the value of Toncoin attached to the message must be equal to the value of the incoming message, minus the fees associated with processing. `mode = 64` with `.store_grams(0)` will do for us. The example will result in the following:
-
-Let there be 100 coins on the balance of the smart contract and we receive an internal message with 60 coins and send a message with 0 (because `.store_grams(0)`) , the total fee is 3.
-
- `mode = 64` - balance (100 = 100 coins), send (60-3 = 57 coins)
+ 根據任務的要求，附加到訊息的 Toncoin 的值必須等於傳入訊息的值減去處理費用。
+ `mode = 64` 並且 `.store_grams(0)` 就足夠了。
  
- So our conditional statement will look like this:
+此範例將產生以下結果：
 
+假設智慧合約的餘額為 100 個 Toncoin，我們收到了一個 60 個 Toncoin 的內部訊息，並發送了一個 0 個 Toncoin 的訊息（因為 `.store_grams(0)`），總費用為 3 個 Toncoin。
+
+`mode = 64` - 餘額（100 = 100 個 Toncoin），傳送（60-3 = 57 個 Toncoin）
+
+ 因此，我們的條件語句如下：
  
 	   if ~ equal_slices(sender_address, owner_address) {
 		cell msg_body_cell = begin_cell().store_slice(in_msg_body).end_cell();
@@ -272,7 +269,7 @@ Let there be 100 coins on the balance of the smart contract and we receive an in
 		 send_raw_message(msg, 64);
 	   }
 
-And the full code of the smart contract:
+完整的智慧合約程式碼：
 
 	int equal_slices (slice a, slice b) asm "SDEQ";
 
@@ -307,6 +304,8 @@ And the full code of the smart contract:
 	   }
 	}
 	
-## Conclusion
+## 結論
 
-Since the messages and our proxy function are `internal`, then it will not work to "pull" the contract through `toncli` - it works with messages inside the TON. How then to develop such contracts correctly - answer from [tests](https://en.wikipedia.org/wiki/Test-driven_development). Which we will write in the next lesson.
+由於訊息和我們的代理函數都是 `internal` 的，所以無法通過 `toncli` 「讀取」合約 - 它只在 TON 內部處理訊息。
+那麼如何正確開發此類合約 - 答案來自於測試驅動開發。
+我們將在下一課中撰寫[測試](https://en.wikipedia.org/wiki/Test-driven_development)。
