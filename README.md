@@ -7,8 +7,8 @@
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 || **第一輪**   ||||
 | 1 | 簡單 FunC 智慧合約 | 類型、異常、函數、合約部署、在測試網路中進行 GET 請求 | [LINK](./1lesson/firstlesson.md)  | ✅  |
-| 2 | 第一個智能合約的 FunC 測試  | FunC 測試邏輯、測試結構、元組  | [LINK](./2lesson/secondlesson.md) | ✅  |
-| 3 | 訊息，讓我們編寫一個代理合約 |  訊息、訊息模式、原始資料類型、單元引用 | [LINK](./3lesson/thirdlesson.md) | ✅  |
+| 2 | FunC 智能合約的測試 | FunC 測試邏輯、測試結構、元組  | [LINK](./2lesson/secondlesson.md) | ✅  |
+| 3 | 訊息，讓我們撰寫一個代理合約 |  訊息、訊息模式、原始資料類型、單元引用 | [LINK](./3lesson/thirdlesson.md) | ✅  |
 | 4 | 測試訊息 | 地址、TL-B、寄存器 c5 和輸出操作 |  [LINK](./4lesson/forthlesson.md) | ✅ |
 | 5 | 合約中的標記和資料儲存 | Op - 用於操作識別、計算費用、合約中的原始資料儲存  | [LINK](./5lesson/fifthlesson.md) |  ✅  |
 | 6 | 測試合約中的標記和資料儲存 |  標記消息和資料儲存的各種測試  | [LINK](./6lesson/sixthlesson.md) |  ✅ |
@@ -26,7 +26,7 @@
 | 15 | 創建 NFT 集合  | 獲取有關 NFT 集合和單個元素的信息，將集合和元素部署到網路 | [LINK](./15lesson/NFTCollectionDeploy_eng.md) | ✅  |
 | 16 | 我們發行自己的代幣：ICO  | ettons ICO，Jetton 錢包餘額| [LINK](./16lesson/ICO.md) | ✅  |
 || **合約安全系列**   |||||
-| 18 |  簡單合約的黑客攻擊 | 編譯器優化代碼而沒有不純的代碼導致的漏洞 | [LINK](./18lesson/hack_eng.md) | ✅  |
+| 18 |  簡單合約的駭客攻擊 | 編譯器優化代碼而沒有不純的代碼導致的漏洞 | [LINK](./18lesson/hack_eng.md) | ✅  |
 || **對 TON 區塊鏈的請求**   |||||
 | 19 | tonapi.io | 請求有關帳戶、域名拍賣、NFT 和 Jettons 的信息  | [LINK](./19lesson/tonapi_eng.md) | ✅  |
 | 20 | ton.js | 使用 JS（ton.js）從智能合約中取得資料  | [LINK](./20lesson/tonjs_eng.md) | ✅  |

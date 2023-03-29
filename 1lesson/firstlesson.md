@@ -1,12 +1,12 @@
-# Lesson 1: 簡單的 FunC 智慧合約
+# Lesson 1: 簡單 FunC 智慧合約
 ## 介紹
 
-在這個教程中，我們將使用 FunC 語言在 The Open Network 測試網上撰寫您的第一個智慧合約，並使用 [toncli](https://github.com/disintar/toncli) 將其部署到測試網上，並使用 Fift 語言中的訊息進行測試。
+在這個課程中，我們將使用 FunC 語言在 The Open Network 測試網上撰寫您的第一個智慧合約，並使用 [toncli](https://github.com/disintar/toncli) 將其部署到測試網上，並使用 Fift 語言中的訊息進行測試。
 
 > *部署是將合約轉移到網路上（在這種情況下，是將智慧合約轉移到區塊鏈上）
 
 ## 需求
-完成此教程，您需要安裝 [toncli](https://github.com/disintar/toncli/blob/master/INSTALLATION.md) 命令行界面。
+完成此課程，您需要安裝 [toncli](https://github.com/disintar/toncli/blob/master/INSTALLATION.md) 命令行界面。
 
 ## 智慧合約
 我們將創建的智慧合約應具備以下功能：
@@ -30,21 +30,21 @@ Toncli 創建了一個簡單的錢包專案，您可以在其中看到 4 個文�
 - fift;
 - test;
 
-在此階段，我們對 func 和 fift 文件夾感興趣，分別在其中使用 FunС 和 Fift 編寫代碼。
+在此階段，我們對 func 和 fift 文件夾感興趣，分別在其中使用 FunС 和 Fift 撰寫程式碼。
 
 ##### 什麼是 FunC 和 Fift
 
-FunC 高級語言用於在 TON 上編程智能合約。FunC 程序被編譯成 Fift 組合語言代碼，該代碼為 TON 虛擬機（TVM）生成相應的字節碼（關於 TVM 更多信息可在[此](https://ton-blockchain.github.io/docs/tvm.pdf)找到）。進一步地，這個字節碼（實際上是一個 cell 樹，就像 TON 區塊鏈中的任何其他數據一樣）可以用於在區塊鏈上創建智能合約，也可以在 TON 虛擬機（TON Virtual Machine）的本地實例上運行。
+FunC 高級語言用於在 TON 上編程智能合約。FunC 程序被編譯成 Fift 組合語言程式碼，該程式碼為 TON 虛擬機（TVM）生成相應的字節碼（關於 TVM 更多信息可在[此](https://ton-blockchain.github.io/docs/tvm.pdf)找到）。進一步地，這個字節碼（實際上是一個 cell 樹，就像 TON 區塊鏈中的任何其他數據一樣）可以用於在區塊鏈上創建智能合約，也可以在 TON 虛擬機（TON Virtual Machine）的本地實例上運行。
 
 有關 FunC 的更多資訊可點[此](https://ton-blockchain.github.io/docs/#/smart-contracts/)查看
 
-##### 讓我們為我們的代碼準備一個文件
+##### 讓我們為我們的程式碼準備一個文件
 
 進入 func 文件夾：
 
     cd func
 
-並打開 code.func 文件，你將看到簡單的錢包智能合約，在屏幕上刪除所有代碼，我們準備開始編寫我們的第一個智能合約。
+並打開 code.func 文件，你將看到簡單的錢包智能合約，在螢幕上刪除所有程式碼，我們準備開始撰寫我們的第一個智能合約。
 
 ## 外部方法
 
@@ -91,7 +91,7 @@ FunC 高級語言用於在 TON 上編程智能合約。FunC 程序被編譯成 F
 簡單來說，Cell 是密封的單元，Slice 是當單元可以被讀取時，Builder 是當您組裝單元時。
 ## 將結果片段轉換為整數
 
-為了將結果片段轉換為整數，添加以下代碼：`int n = in_msg_body~load_uint(32);`
+為了將結果片段轉換為整數，添加以下程式碼：`int n = in_msg_body~load_uint(32);`
 
 現在，`recv_internal()` 函數如下所示：
 
@@ -189,11 +189,11 @@ TVM 虛擬機是基於堆棧（stack-based）的，因此使用特定的寄存�
 
 異常可以由有條件的原始數據 `throw_if` 和 `throw_unless` 和無條件的 `throw` 調用來拋出。
 
-讓我們使用 `throw_if` 並傳遞任何錯誤代碼。為了取位，我們使用 `slice_bits()`。
+讓我們使用 `throw_if` 並傳遞任何錯誤程式碼。為了取位，我們使用 `slice_bits()`。
 
 `throw_if(35,in_msg_body.slice_bits() < 32);`
 
-順便提一下，在 TON TVM 虛擬機中，有標準的異常代碼，我們將在測試中真正需要它們。你可以在[這裡](https://ton-blockchain.github.io/docs/#/smart-contracts/tvm_exit_codes)查看。
+順便提一下，在 TON TVM 虛擬機中，有標準的異常程式碼，我們將在測試中真正需要它們。你可以在[這裡](https://ton-blockchain.github.io/docs/#/smart-contracts/tvm_exit_codes)查看。
 
 在函數開頭插入：
 
@@ -219,7 +219,7 @@ TVM 虛擬機是基於堆棧（stack-based）的，因此使用特定的寄存�
 現在讓我們撰寫一個 get_total () 函數，它返回一個整數，並具有 method_id 規範（稍後會講到）：
  
     int get_total() method_id {
-  	;; 在此處編寫代碼
+  	;; 在此處撰寫程式碼
 	}
 
 ##### Method_id
@@ -239,7 +239,7 @@ method_id 規範允許您從 lite-client 或 ton-explorer 按名稱調用 GET �
   		return total;
 	}
 	
-## 我們智慧合約的所有代碼
+## 我們智慧合約的所有程式碼
 
     () recv_internal(slice in_msg_body) impure {
 		throw_if(35,in_msg_body.slice_bits() < 32);
@@ -284,11 +284,11 @@ method_id 規範允許您從 lite-client 或 ton-explorer 按名稱調用 GET �
 
 要呼叫 recv_internal() 函數，我們需要在 TON 網路中發送一條消息。
 
-使用 [toncli send](https://github.com/disintar/toncli/blob/master/docs/advanced/send_fift_internal.md) 工具，讓我們編寫一個小的 Fift 腳本，向我們的合約發送一條 32 位元的消息。
+使用 [toncli send](https://github.com/disintar/toncli/blob/master/docs/advanced/send_fift_internal.md) 工具，讓我們撰寫一個小的 Fift 腳本，向我們的合約發送一條 32 位元的消息。
 
 ##### 消息腳本
 
-首先在 fift 資料夾中創建一個 `try.fif` 檔案，並編寫以下代碼：
+首先在 fift 資料夾中創建一個 `try.fif` 檔案，並撰寫以下程式碼：
  
     "Asm.fif" include
 	
@@ -321,7 +321,7 @@ method_id 規範允許您從 lite-client 或 ton-explorer 按名稱調用 GET �
 
 ![toncli get send](./img/tonclisendget.png)
 
-## 恭喜你完成了本教程！
+## 恭喜你完成了本課程！
 
 ##### 練習
 
