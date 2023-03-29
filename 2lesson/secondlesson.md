@@ -5,7 +5,7 @@
 
 ## 要求
 
-要完成本課程，您需要安裝 [toncli](https://github.com/disintar/toncli/blob/master/INSTALLATION.md) 命令行界面並完成[第一課](https://github.com/romanovichim/TonFunClessons_Eng/blob/main/1lesson/firstlesson.md)。
+要完成本課程，您需要安裝 [toncli](https://github.com/disintar/toncli/blob/master/INSTALLATION.md) 終端機指令並完成[第一課](https://github.com/romanovichim/TonFunClessons_Eng/blob/main/1lesson/firstlesson.md)。
 
 ## 重要提示
 
@@ -28,9 +28,9 @@
 
 讓我們在上一節的程式碼中，我們將在 *tests* 文件夾中創建 *example.func* 文件來撰寫我們的測試。
 
-##### Data 函數
+##### 資料函數
 
-Data 函數不接受任何參數，但必須返回：
+資料函數不接受任何參數，但必須返回：
 - 函數選擇器（function selector） - 被測試合約中所調用的函數的 ID;
 - tuple - 我們將傳遞給執行測試的函數的（stack）值;
 - c4 cell - 在控制寄存器 c4 中的「永久數據」;

@@ -1,4 +1,4 @@
-# Lesson 3 Proxy smart contract
+# Lesson 3 讓我們撰寫一個代理合約（Proxy）
 ## 介紹
 
 在這個課程中，我們將使用 FunC 語言在測試網路 The Open Network 中撰寫一個代理（將所有訊息發送給其擁有者）智慧合約，使用 [toncli](https://github.com/disintar/toncli) 部署到測試網路中，並在下一課中進行測試。.
