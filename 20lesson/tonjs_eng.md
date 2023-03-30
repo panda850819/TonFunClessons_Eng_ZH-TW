@@ -1,66 +1,67 @@
-# Requests to the TON blockchain using JS: How to fetch NFT data
+# 使用 JS 向 TON 區塊鏈發出請求：如何獲取 NFT 數據
 
-Often Web3 applications or Dapps look architecturally like a Frontend that invokes smart contract methods. Accordingly, you need to be able to make requests for JS in the blockchain. There are few JS examples in TON, so I decided to make a small visual tutorial.
+Web3 應用程序或 Dapps 的架構通常看起來像調用智能合約方法的前端。
+因此，您需要能夠在區塊鏈中使用 JS 進行請求。 TON 中有一些 JS 範例，因此我決定製作一個小型的視覺教程。
 
-## Introduction
+## 簡介
 
-Web 3 applications are often built around the standards that exist in the blockchain, in TON these are NFT and Jetton. For the NFT standard, a common task is to obtain the NFT addresses of a particular collection. Therefore, in this tutorial:
+Web3 應用程序通常建立在區塊鏈中存在的標準之上，在 TON 中，這些標準是 NFT 和 Jetton。
+對於 NFT 標準，常見的任務是獲取特定收藏的 NFT 地址。因此，在本教程中：
 
-  - we get data about the NFT collection
-  - get NFT address by index
- 
-and all this in JS.
+- 我們獲取有關 NFT 收藏的數據
+- 按索引（Index）獲取 NFT 地址
+而且，所有這些都在 JS 中進行。
 
-### Install libraries
+### 安裝資源庫
+為了對 TON 進行請求，我們需要 `typescript` 和用於處理 TON 的模組。 
 
-For requests to TON, we need `typescript` and modules for working with TON.
-To work with Typescript we need:
-- Node.js is the environment in which you will run the TypeScript compiler.
-- The TypeScript Compiler is a Node.js module that compiles TypeScript to JavaScript.
+要使用 Typescript，我們需要：
+- Node.js 是您運行 TypeScript 編譯器的環境。
+- TypeScript 編譯器是一個 Node.js 模組，用於將 TypeScript 編譯為 JavaScript。
 
-> We will not dive deep into Node.js, instructions for installing it are [here](https://nodejs.org/en/download/):
+> 我們不會深入介紹 Node.js，安裝它的說明在[這裡](https://nodejs.org/en/download/)：
 
-For the convenience of working with modules, let's create a `package.json` file using the `npm` package manager:
-1. In the console, go to your project folder (where we will write scripts)
-2. Enter in the console
+> 為了方便使用套件，讓我們使用 `npm` 管理器創建一個 `package.json` 文件：
 
+1. 在控制台中，進入您的專案文件夾（我們將在其中撰寫程式）
+2. 在控制台中輸入
 
 	npm init
 
-3. Answer the questions in the console and make sure the `package.json` file is created
+3. 在 console 中回答問題，並確保創建了 `package.json` 文件。
 
-Now install `typescript`. At the command line, enter the following command:
+現在安裝 `typescript`。在終端機中，輸入以下命令：
 
 	npm install typescript
 
-Once installed, you can enter the following command to check the current version of the TypeScript compiler:
+安裝完成後，您可以輸入以下命令檢查當前版本的 TypeScript 編譯器：
 
 	tsc --v
 
-We will also install the ts-node package to execute TypeScript in the console and the REPL for node.js.
+我們還將安裝 `ts-node` 套件，在 console 和 node.js 的 REPL 中執行 TypeScript。
 
 	npm install ts-node
 
-It remains to install modules for working with TON:
+還需要安裝用於處理 TON 的模組：
 
 	npm install ton ton-core ton-crypto
 
-Alright, now we can start scripting.
+好了，現在我們可以來撰寫合約了。
 
-## Get information about the Collection
+## 獲取有關收藏品的信息
 
-To get information about the NFT collection, we need to call the GET method of the collection's smart contract, for this we need:
-- use a certain API service that interacts with Light servers of the TON blockchain
-- call the required GET method through this client
-- convert the received data into a readable form
+要獲取關於 NFT 收藏品的信息，我們需要調用收藏品的智能合約的 GET 方法，為此我們需要：
+- 使用與 TON 區塊鏈的 Light 服務器互動的特定 API 服務
+- 通過這個客戶端調用所需的 GET 方法
+- 將接收的資料轉換進可讀表格
 
-In this tutorial, we will use [toncenter API](https://github.com/toncenter/ton-http-api), for the request we will use the js client, libraries [ton.js](https://www.npmjs.com /package/ton).
+在本課程中，我們將使用 [toncenter API](https://github.com/toncenter/ton-http-api)，對於請求，我們將使用 js 客戶端，[ton.js](https://www.npmjs.com /package/ton)。
 
-Let's create a `collection.ts` script. Import client from library:
+讓我們創建一個 `collection.ts`。
 
 	import { TonClient } from 'ton';
 	
-And connect to toncenter:
+並連接到 toncenter
 
 	import { TonClient } from 'ton';
 
@@ -68,15 +69,15 @@ And connect to toncenter:
 		endpoint: 'https://toncenter.com/api/v2/jsonRPC',
 	});
 	
-> For simplicity of the example, we do not use an API key, so we will be limited to one request per minute, you can use the bot https://t.me/tonapibot to create a key
+為了簡化範例，我們不使用 API 金鑰，因此我們將被限制每分鐘一個請求，您可以使用[機器人](https://t.me/tonapibot) 來創建金鑰。
 
-Now let's look at the [NFT collection standard on TON](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) in order to understand which GET method to call . The standard shows that we need the `get_collection_data()` function, which will return us:
+現在讓我們查看 TON 上的[NFT 收藏品標準](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) ，以便了解要調用哪個 GET 方法。該標準顯示我們需要 `get_collection_data()` 函數，它將返回：
 
-- `next_item_index` is the number of currently deployed NFT items in the collection.
-- `collection_content` - the contents of the collection in the format corresponding to the [TEP-64](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md) standard.
-- `owner_address` - address of the owner of the collection, zero address if there is no owner.
+- `next_item_index` 是當前部署的 NFT 產品數量
+- `collection_content` - 收藏品的內容，格式符合 [TEP-64](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md) 標準。
+- `owner_address` - 收藏品擁有者的地址，如果沒有擁有者則為零地址。
 
-Let's use the syntactic sugar `async/await` and call this method for some collection in TON:
+讓我們使用語法糖 `async/await` ，為 TON 中的某個收藏品調用此方法：
 
 	import { TonClient } from 'ton';
 
@@ -127,15 +128,16 @@ Run the script with `ts-node`. You should get the following:
 
 ![collection](./img/1.PNG)
 
-## Get the address of the Collection element by index
+## 透過索引獲取 NFT 集合元素的地址
 
-Now we will solve the problem of getting the address by index, we will again call the GET method of the smart contract of the collection. According to the standard, the `get_nft_address_by_index(int index)` method, which returns `slice address`, is suitable for this task.
+現在我們要解決通過 Index 獲取地址的問題，我們將再次調用集合的智能合約的GET方法。
+根據標準，`get_nft_address_by_index(int index)` 方法適用於此任務，該方法返回 `slice address`。
 
-This method takes an `int index` parameter and at first glance it looks like you just need to pass a value with type `int` to the smart contract. This is of course true, but since the TON virtual machine uses registers, the value with the `int` type will need to be passed in a tuple. To do this, the `ton.js` library has a `TupleBuilder` .
+該方法接受一個 `int index` 參數，乍一看似乎只需將具有 `int` 類型的值傳遞給智能合約即可。當然，這是真的，但由於 TON 虛擬機使用寄存器，因此需要通過元組傳遞具有 `int` 類型的值。為此，`ton.js` 提供了 `TupleBuilder`。
 
 	import { TupleBuilder } from 'ton';
 
-Write the value 0 to the tuple:
+將值 0 寫入元組：
 
 	import { TonClient } from 'ton';
 	import { Address } from 'ton-core';
@@ -154,7 +156,7 @@ Write the value 0 to the tuple:
 
 	})().catch(e => console.error(e));
 
-It remains to make a request and convert the address using `readAddress()`:
+仍需發送請求並使用 `readAddress()` 轉換地址：
 
 	import { TonClient } from 'ton';
 	import { Address } from 'ton-core';
@@ -180,10 +182,10 @@ It remains to make a request and convert the address using `readAddress()`:
 		console.log('nftAddress', nftAddress.toString());
 	})().catch(e => console.error(e));
 
-Run the script with `ts-node`. You should get the following:
+使用 `ts-node` 運行程式。你應該會得到以下結果：
 
 ![address](./img/2.PNG)
 
-## Conclusion
+## 結論
 
-I publish similar analyzes and tutorials in the telegram channel https://t.me/ton_learn, I will be glad for your subscription.
+作者也在 [Telegram 頻道](https://t.me/ton_learn)中發佈了類似的分析和教學，歡迎您訂閱。 
