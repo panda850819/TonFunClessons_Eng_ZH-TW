@@ -24,7 +24,7 @@
 || **GO series**   |||||
 | 14 | 創建錢包和部署智能合約 | 使用 GO 與 TON 進行工作，創建錢包，使用 hexBOC 合約形式，發送消息，調用 GET 方法 | [LINK](./14lesson/wallet_eng.md) | ✅  |
 | 15 | 創建 NFT 集合  | 獲取有關 NFT 集合和單個元素的信息，將集合和元素部署到網路 | [LINK](./15lesson/NFTCollectionDeploy_eng.md) | ✅  |
-| 16 | 我們發行自己的代幣：ICO  | ettons ICO，Jetton 錢包餘額| [LINK](./16lesson/ICO.md) | ✅  |
+| 16 | 我們發行自己的代幣：ICO  | Jettons ICO，Jetton 錢包餘額| [LINK](./16lesson/ICO.md) | ✅  |
 || **合約安全系列**   |||||
 | 18 |  簡單合約的駭客攻擊 | 編譯器優化代碼而沒有不純的代碼導致的漏洞 | [LINK](./18lesson/hack_eng.md) | ✅  |
 || **對 TON 區塊鏈的請求**   |||||

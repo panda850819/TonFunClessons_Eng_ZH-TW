@@ -1,8 +1,8 @@
-# Introduction
+# 介紹
 
-The FunC language is used to program smart contracts on the TON blockchain. Contract logic is executed in TVM, the stack-based TON Virtual Machine.
+FunC 語言用於在 TON 區塊鏈上編寫智能合約。 合約邏輯在基於堆棧的 TON 虛擬機 TVM 中執行。
 
-# Part 1 Basic syntax, the first Smart Contract — Data Types, Storage, Functions
+# 第一部分 基本語法、第一個智能合約——資料類型、儲存空間、函數
 
 	;; Single line comment
 
@@ -93,9 +93,15 @@ The FunC language is used to program smart contracts on the TON blockchain. Cont
 	}
 	;; Now any observer can read get_total value via lite-client or explorer
 
-# Part 2 Messages
+# 第二部分 訊息
 
-The actor model is a model of concurrent computation and is at the heart of TON smart contracts. Each smart contract can process one message at a time, change its own state, or send one or several messages. Processing of the message occurs in one transaction, that is, it cannot be interrupted. Messages to one contract are processed consequently one by one. As a result, the execution of each transaction is local and can be parallelized at the blockchain level, which allows for on-demand throughput horizontal scaling and hosting an unlimited number of users and transactions.
+參與者模型是並發計算模型，是 TON 智能合約的核心。每個智能合約一次可以處理一條訊息，改變自己的狀態，或者發送一條或多條訊息。
+
+訊息的處理發生在一個事件中，也就是說，它不能被中斷。 
+
+因此，合約的訊息需要被一個一個地處理。 
+
+因此，每個交易的執行都是本地的，並且可以在區塊鏈級別並行化，從而允許按需吞吐量水平擴展並託管無限數量的用戶和交易。
 
 	;; For normal internal message-triggered transactions, before passing control to recv_internal TVM puts the following
 	;; elements on stack.
@@ -142,7 +148,7 @@ The actor model is a model of concurrent computation and is at the heart of TON 
 	  throw(101);    ;; Throw exception with code 101 unconditionally
 	}
 
-# Part 3 Flow control: Conditional Statements and Loops; Dictionaries
+# 第三部分 流程控制：條件語句和循環； 詞典
 
 	;; FunC, of course, supports if statements
 
@@ -208,7 +214,7 @@ The actor model is a model of concurrent computation and is at the heart of TON 
 	;; udict_get_next? - Calculates the minimum key k in the dictionary dict that is greater than some given value and returns k, the associated value, and a flag indicating success. If the dictionary is empty, returns (null, null, 0).
 	
 
-# Part 4 Functions
+# 第四部分 函數
 	;; Most useful functions are slice reader and builder writer primitives, storage handlers and sending messages
 
 	;; slice begin_parse(cell c) - Converts a cell into a slice
@@ -233,7 +239,7 @@ The actor model is a model of concurrent computation and is at the heart of TON 
 
 	
   
-# Further Reading
+# 進一步閱讀
 
 	{- 
 		I am really into the TON ecosystem, so I wrote lessons on developing smart contracts: https://github.com/romanovichim/TonFunClessons_Eng
